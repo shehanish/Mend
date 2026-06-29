@@ -1,11 +1,11 @@
-# Days Since - Breakup Recovery & No Contact Tracker
+# Mend - Breakup Recovery & No Contact Tracker
 
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)
 ![iOS](https://img.shields.io/badge/iOS-17.0+-blue.svg)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-Enabled-blue.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-MVVM-green.svg)
 
-**Days Since** is a specialized iOS application built with SwiftUI, designed to support users navigating the difficult emotions of a breakup. It provides a safe, interactive environment powered by **AI emotional support** to track recovery progress, process feelings, and nurture self-love and affirmations.
+**Mend** is a specialized iOS application built with SwiftUI, designed to support users navigating the difficult emotions of a breakup. It provides a safe, interactive environment to track healing milestones, maintain boundaries, process feelings via AI, and manage sudden waves of anxiety or grief.
 
 ## ✨ Key Features
 
@@ -52,12 +52,12 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/Days-Since-Counter-iosapp.git
-   cd Days-Since-Counter-iosapp
+   git clone https://github.com/yourusername/Mend-iosapp.git
+   cd Mend-iosapp
    ```
 
 2. **Open the project in Xcode:**
-   Open the `Days-Since-Counter-iosapp.xcodeproj` or `.xcworkspace` file in Xcode.
+   Open the `Mend-iosapp.xcodeproj` or `.xcworkspace` file in Xcode.
 
 3. **Configure the OpenAI API Key:**
    This project uses an `.xcconfig` file to keep API keys secure.
@@ -85,7 +85,7 @@ This project follows a clean **MVVM architecture**:
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/Days-Since-Counter-iosapp/issues) if you want to contribute.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/Mend-iosapp/issues) if you want to contribute.
 
 ## 📄 License
 

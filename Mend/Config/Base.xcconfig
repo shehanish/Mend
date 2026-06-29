@@ -1,0 +1,9 @@
+//
+//  Base.xcconfig
+//  Mend
+//
+//  Created by Shehani Hansika on 12.05.26.
+//
+
+// Shared settings
+#include "Secrets.xcconfig"

@@ -1,9 +1,0 @@
-//
-//  Base.xcconfig
-//  Days-Since-Counter-iosapp
-//
-//  Created by Shehani Hansika on 12.05.26.
-//
-
-// Shared settings
-#include "Secrets.xcconfig"
