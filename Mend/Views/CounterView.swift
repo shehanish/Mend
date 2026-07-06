@@ -15,47 +15,47 @@ struct CounterView: View {
     // Details for tracker
     @State private var selectedDate: Date = .now
     @State private var selectedPeriod: String?
-
+    
     var body: some View {
         ZStack {
             Color.appBackgroundGradient
-                .ignoresSafeArea()
-
             if isTrackerActive {
                 ActiveTrackerView(startDate: selectedDate, goal: selectedPeriod) {
                     isTrackerActive = false
                     selectedPeriod = nil
                 }
+                .padding(.horizontal)
             } else {
-                // Initial State
-                VStack(spacing: 30) {
-                    BlobAvatarView(width: 220, height: 170)
-                    
-                    Text("Ready to take a step back?")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(Color.textOnPrimary)
-                    
-                    Text("Starting no contact gives you space to heal and refocus on yourself.")
-                        .font(.body)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.textOnPrimary.opacity(0.8))
-                        .padding(.horizontal, 30)
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 30) {
+                        BlobAvatarView(width: 170, height: 120)
 
-                    Button(action: {
-                        showSetupSheet = true
-                    }) {
-                        Text("Start Go For No Contact")
-                            .font(.headline)
+                        Text("Ready to take a step back?")
+                            .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.brandPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .foregroundStyle(Color.textOnPrimary)
+
+                        Text("Starting no contact gives you space to heal and refocus on yourself.")
+                            .font(.body)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(Color.textOnPrimary.opacity(0.8))
+                            .padding(.horizontal, 30)
+
+                        Button(action: {
+                            showSetupSheet = true
+                        }) {
+                            Text("Start Go For No Contact")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.brandPrimary)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                        }
+                        .padding(.horizontal, 40)
+                        .padding(.top, 20)
                     }
-                    .padding(.horizontal, 40)
-                    .padding(.top, 20)
                 }
             }
         }
@@ -73,6 +73,8 @@ struct CounterView: View {
         }
     }
 }
+
+
 
 #Preview {
     CounterView()

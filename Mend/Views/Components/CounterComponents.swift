@@ -1,6 +1,6 @@
 import SwiftUI
-import SwiftData
 import Combine
+
 struct NoContactSetupSheet: View {
     @Binding var selectedDate: Date
     @Binding var selectedPeriod: String?
@@ -23,31 +23,30 @@ struct NoContactSetupSheet: View {
                 
                 ScrollView {
                     VStack(spacing: 25) {
-                        
                         Text("Set Up No Contact")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundStyle(Color.textOnPrimary)
                             .padding(.top, 20)
-                        
-                        // Date & Time Picker
+
                         VStack(alignment: .leading, spacing: 10) {
                             Text("When did you start?")
                                 .font(.subheadline)
                                 .foregroundStyle(Color.textOnPrimary.opacity(0.8))
                                 .padding(.horizontal, 20)
-                            
-                            DatePicker("Start Date & Time",
-                                       selection: $selectedDate,
-                                       displayedComponents: [.date, .hourAndMinute])
+
+                            DatePicker(
+                                "Start Date & Time",
+                                selection: $selectedDate,
+                                displayedComponents: [.date, .hourAndMinute]
+                            )
                             .datePickerStyle(.compact)
                             .padding()
                             .background(.white.opacity(0.8))
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                             .padding(.horizontal)
                         }
-                        
-                        // Duration Dropdown
+
                         DropDownView(
                             title: "How long is your goal?",
                             prompt: "Select duration",
@@ -55,14 +54,14 @@ struct NoContactSetupSheet: View {
                             selection: $selectedPeriod
                         )
                         .padding(.top, 10)
-                        
+
                         if selectedPeriod == "Custom" {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Enter number of days")
                                     .font(.subheadline)
                                     .foregroundStyle(Color.textOnPrimary.opacity(0.8))
                                     .padding(.horizontal, 20)
-                                
+
                                 TextField("e.g. 14", text: $customDays)
                                     .keyboardType(.numberPad)
                                     .padding()
@@ -73,10 +72,9 @@ struct NoContactSetupSheet: View {
                             }
                             .transition(.opacity.combined(with: .move(edge: .top)))
                         }
-                        
+
                         Spacer(minLength: 30)
-                        
-                        // Save Button
+
                         Button(action: {
                             if selectedPeriod == "Custom" && !customDays.isEmpty {
                                 selectedPeriod = "\(customDays) Days"
@@ -92,7 +90,7 @@ struct NoContactSetupSheet: View {
                                 .background((selectedPeriod != nil && (selectedPeriod != "Custom" || !customDays.isEmpty)) ? Color.brandPrimary : Color.brandPrimary.opacity(0.5))
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
-                        .disabled(selectedPeriod == nil || (selectedPeriod == "Custom" && customDays.isEmpty)) // Require them to pick a duration or type custom days
+                        .disabled(selectedPeriod == nil || (selectedPeriod == "Custom" && customDays.isEmpty))
                         .padding(.horizontal, 40)
                         .padding(.bottom, 30)
                     }
@@ -112,10 +110,6 @@ struct NoContactSetupSheet: View {
     }
 }
 
-#Preview {
-    CounterView()
-}
-
 // MARK: - Active Tracker View
 struct ActiveTrackerView: View {
     let startDate: Date
@@ -125,7 +119,6 @@ struct ActiveTrackerView: View {
     @State private var now = Date()
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    // Parse goal to days
     private var goalDays: Double? {
         guard let goal = goal else { return nil }
         if goal.contains("Unlimited") || goal.contains("Not Decided") {
@@ -136,10 +129,9 @@ struct ActiveTrackerView: View {
     }
     
     private var progress: Double {
-        guard let goalDays = goalDays, goalDays > 0 else { return 1.0 } // Full circle if unlimited
+        guard let goalDays = goalDays, goalDays > 0 else { return 1.0 }
         let totalSeconds = goalDays * 24 * 60 * 60
         let elapsedSeconds = now.timeIntervalSince(startDate)
-        
         let calculatedProgress = elapsedSeconds / totalSeconds
         return min(max(calculatedProgress, 0.0), 1.0)
     }
@@ -157,11 +149,9 @@ struct ActiveTrackerView: View {
                 .foregroundColor(Color.textOnPrimary)
             
             ZStack {
-                // Background Track
                 Circle()
                     .stroke(Color.sageGreen.opacity(0.4), lineWidth: 20)
                 
-                // Progress
                 Circle()
                     .trim(from: 0, to: CGFloat(progress))
                     .stroke(
@@ -171,7 +161,6 @@ struct ActiveTrackerView: View {
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 1.0), value: progress)
                 
-                // Content inside circle
                 VStack(spacing: 8) {
                     Text("\(daysElapsed)")
                         .font(.system(size: 60, weight: .bold, design: .rounded))
@@ -198,7 +187,6 @@ struct ActiveTrackerView: View {
             }
             .frame(width: 280, height: 280)
             
-            // Detailed time
             HStack(spacing: 20) {
                 timeComponentView(title: "Hours", value: Calendar.current.dateComponents([.hour], from: startDate, to: now).hour.map { $0 % 24 } ?? 0)
                 timeComponentView(title: "Mins", value: Calendar.current.dateComponents([.minute], from: startDate, to: now).minute.map { $0 % 60 } ?? 0)

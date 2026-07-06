@@ -10,19 +10,22 @@ import SwiftData
 
 // MARK: - Preview-only AI service (kept outside #Preview to avoid macro issues)
 private struct PreviewAIInsightService: AIInsightService {
-    func generateMoodInsight(from input: MoodInsightInput) async throws -> String {
+    func generateMoodInsight(from input: MoodInsightInput, userName: String) async throws -> String {
         "Preview: Your mood today looks steady."
     }
     
-    func generateChatResponse(conversation: [(isUser: Bool, text: String)]) async throws -> String {
+    func generateChatResponse(conversation: [(isUser: Bool, text: String)], userName: String, context: ChatInsightContext?) async throws -> String {
         "Preview: I hear you. Take things one day at a time."
     }
 }
 
 struct HomeView: View {
+    @AppStorage("isLoggedIn") private var isLoggedIn = true
     @AppStorage("userName") private var userName = "Friend"
     @AppStorage("profileImageData") private var profileImageData: Data = Data()
     @State private var showProfileSheet = false
+    @State private var showSettingsSheet = false
+    @State private var showLogoutConfirmation = false
     
     private let moods = [
         "Calm", "Sad", "Angry", "Anxious",
@@ -31,13 +34,15 @@ struct HomeView: View {
     
     @State private var vm: HomeViewModel
     @Binding var selectedTab: Int
+    private let onTalkToMeAboutIt: ((String) -> Void)?
     
     // MARK: - Greeting
     @State private var timeBasedGreeting: String = "Good morning"
     
-    init(vm: HomeViewModel, selectedTab: Binding<Int>) {
+    init(vm: HomeViewModel, selectedTab: Binding<Int>, onTalkToMeAboutIt: ((String) -> Void)? = nil) {
         _vm = State(initialValue: vm)
         _selectedTab = selectedTab
+        self.onTalkToMeAboutIt = onTalkToMeAboutIt
     }
     
     private func updateGreeting() {
@@ -65,78 +70,106 @@ struct HomeView: View {
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 30) {
-                        BlobAvatarView(
-                            width: 150,
-                            height: 160,
-                            showShadow: true,
-                            animate: true
+                        VStack(spacing: 18) {
+                            BlobAvatarView(
+                                width: 150,
+                                height: 160,
+                                showShadow: true,
+                                animate: true
+                            )
+                            .padding(.top, 2)
+
+                            Text(greetingText)
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundStyle(Color.brandPrimary)
+
+                            Text("Let's unpack the day slowly... together.")
+                                .font(.subheadline)
+                                .foregroundStyle(Color.brandPrimary)
+
+                            AffirmationView()
+                                .padding(.top, 4)
+                        }
+                        .padding(20)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.96), Color.brandPrimary.opacity(0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                        .padding(.top, 2)
-                        
-                        Text(greetingText)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color.brandPrimary)
-                            .padding(.top, -20)
-                        
-                        Text("Let's unpack the day slowly... together.")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.brandPrimary)
-                            .padding(.top, -20)
-                        
-                        AffirmationView()
-                            .padding(.horizontal, 22)
-                        
-                        MoodsSectionView(
-                            moods: moods,
-                            selectedMoods: $vm.selectedMoods,
-                            notesText: $vm.notesText
-                        ) { _ in
-                            Task { await vm.apply() }
-                        }
-                        .padding(.horizontal)
-                        
-                        // AI loading row
-                        if vm.isGeneratingTodayInsight {
-                            HStack(spacing: 10) {
-                                ProgressView()
-                                Text("I’m here with you… just a moment.")
-                                    .font(.footnote)
-                                    .foregroundStyle(Color.brandPrimary)
+                        .clipShape(RoundedRectangle(cornerRadius: 26))
+                        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
+
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Daily check-in")
+                                .font(.headline)
+                                .foregroundStyle(Color.brandPrimary)
+
+                            MoodsSectionView(
+                                moods: moods,
+                                selectedMoods: $vm.selectedMoods,
+                                notesText: $vm.notesText
+                            ) { _ in
+                                Task { await vm.apply() }
                             }
-                            .padding(.horizontal)
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        .padding(18)
+                        .background(Color.white.opacity(0.88))
+                        .clipShape(RoundedRectangle(cornerRadius: 26))
+                        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
                         
-                        // AI bubble
-                        if let insight = vm.todayInsightText, !insight.isEmpty {
-                            VStack(spacing: 4) {
-                                AIInsightBubbleView(
-                                    text: insight,
-                                    avatarSystemImage: "person.crop.circle.fill"
-                                )
-                                
-                                Button(action: {
-                                    selectedTab = 1
-                                }) {
-                                    HStack(spacing: 4) {
-                                        Text("Talk to me about it")
-                                        Image(systemName: "chevron.right")
-                                    }
-                                    .font(.caption)
-                                    .foregroundStyle(Color.brandPrimary.opacity(0.7))
+                        VStack(alignment: .leading, spacing: 14) {
+                            Text("Your reflection")
+                                .font(.headline)
+                                .foregroundStyle(Color.brandPrimary)
+
+                            if vm.isGeneratingTodayInsight {
+                                HStack(spacing: 10) {
+                                    ProgressView()
+                                    Text("I’m here with you… just a moment.")
+                                        .font(.footnote)
+                                        .foregroundStyle(Color.brandPrimary)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .padding(.trailing, 36)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            
+                            if let insight = vm.todayInsightText, !insight.isEmpty {
+                                VStack(spacing: 4) {
+                                    AIInsightBubbleView(
+                                        text: insight,
+                                        avatarSystemImage: "person.crop.circle.fill"
+                                    )
+
+                                    Button(action: {
+                                        onTalkToMeAboutIt?(insight)
+                                        selectedTab = 1
+                                    }) {
+                                        HStack(spacing: 4) {
+                                            Text("Talk to me about it")
+                                            Image(systemName: "chevron.right")
+                                        }
+                                        .font(.caption)
+                                        .foregroundStyle(Color.brandPrimary.opacity(0.7))
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+                                    .padding(.trailing, 36)
+                                }
+                            }
+
+                            if let err = vm.lastError {
+                                Text(err)
+                                    .font(.footnote.weight(.medium))
+                                    .foregroundStyle(.red)
                         }
-                        
-                        if let err = vm.lastError {
-                            Text("Error: \(err)")
-                                .font(.footnote)
-                                .foregroundStyle(.red)
-                                .padding(.horizontal)
                         }
+                        .padding(18)
+                        .background(Color.white.opacity(0.88))
+                        .clipShape(RoundedRectangle(cornerRadius: 26))
+                        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
+
+                        weekSnapshotCard
                     }
                     .padding(.top, 8)
                     .padding(.bottom, 16)
@@ -147,9 +180,41 @@ struct HomeView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            showProfileSheet = true
-                        }) {
+                        Menu {
+                            Section("Quick Actions") {
+                                Button {
+                                    selectedTab = 1
+                                } label: {
+                                    Label("Continue Chat", systemImage: "bubble.left.and.bubble.right")
+                                }
+
+                                Button {
+                                    selectedTab = 2
+                                } label: {
+                                    Label("Open Journal", systemImage: "book.pages")
+                                }
+                            }
+
+                            Section("Account") {
+                                Button {
+                                    showProfileSheet = true
+                                } label: {
+                                    Label("Profile", systemImage: "person.crop.circle")
+                                }
+
+                                Button {
+                                    showSettingsSheet = true
+                                } label: {
+                                    Label("Settings", systemImage: "gearshape")
+                                }
+
+                                Button(role: .destructive) {
+                                    showLogoutConfirmation = true
+                                } label: {
+                                    Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
+                                }
+                            }
+                        } label: {
                             if !profileImageData.isEmpty, let uiImage = UIImage(data: profileImageData) {
                                 Image(uiImage: uiImage)
                                     .resizable()
@@ -170,9 +235,25 @@ struct HomeView: View {
                 .sheet(isPresented: $showProfileSheet) {
                     ProfileView()
                 }
+                .sheet(isPresented: $showSettingsSheet) {
+                    SettingsView()
+                }
+                .alert("Log out?", isPresented: $showLogoutConfirmation) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Log Out", role: .destructive) {
+                        userName = ""
+                        profileImageData = Data()
+                        isLoggedIn = false
+                    }
+                } message: {
+                    Text("You can sign back in anytime. Your saved journal data stays on the device unless you clear it.")
+                }
             }
             .onAppear {
                 updateGreeting()
+                Task {
+                    await vm.loadHomeSummary()
+                }
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -182,6 +263,170 @@ struct HomeView: View {
                     }
                 }
             }
+        }
+    }
+
+    private var weekSnapshotCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Home Snapshot")
+                        .font(.headline)
+                        .foregroundStyle(Color.brandPrimary)
+                    Text(vm.weeklySummaryLine)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chart.bar.fill")
+                    .foregroundStyle(Color.brandPrimary)
+                    .padding(10)
+                    .background(Color.brandPrimary.opacity(0.12))
+                    .clipShape(Circle())
+            }
+
+            HStack(spacing: 10) {
+                summaryMetric(title: "Check-ins", value: "\(vm.weeklyCheckInCount)")
+                summaryMetric(title: "Notes", value: "\(vm.weeklyNoteCount)")
+            }
+
+            if let warning = vm.weeklyWarningText {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                        .padding(.top, 2)
+
+                    Text(warning)
+                        .font(.footnote)
+                        .foregroundStyle(Color.brandPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(14)
+                .background(Color.orange.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("What helped you most")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+
+                Text(vm.weeklyHelpfulPatternText)
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(Color.brandPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(14)
+            .background(Color.white.opacity(0.88))
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+
+            if !vm.weeklyMoodCounts.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Most common moods")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+
+                    let maxCount = max(vm.weeklyMoodCounts.first?.count ?? 1, 1)
+                    ForEach(vm.weeklyMoodCounts.prefix(4)) { item in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(item.mood)
+                                    .font(.footnote.weight(.medium))
+                                Spacer()
+                                Text("\(item.count)")
+                                    .font(.footnote.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            GeometryReader { proxy in
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.brandPrimary.opacity(0.85))
+                                    .frame(width: proxy.size.width * CGFloat(item.count) / CGFloat(maxCount), height: 8)
+                            }
+                            .frame(height: 8)
+                        }
+                    }
+                }
+                .padding(14)
+                .background(Color.white.opacity(0.88))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            }
+
+            if !vm.weeklyTrendBars.isEmpty {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Mood trend")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+
+                    HStack(alignment: .bottom, spacing: 8) {
+                        ForEach(vm.weeklyTrendBars) { bar in
+                            VStack(spacing: 6) {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(bar.averageScore >= 0.25 ? Color.green.opacity(0.85) : bar.averageScore <= -0.25 ? Color.red.opacity(0.8) : Color.brandPrimary.opacity(0.8))
+                                    .frame(height: CGFloat(18 + 42 * bar.normalizedHeight))
+
+                                Text(bar.dayLabel)
+                                    .font(.caption2.weight(.medium))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("\(bar.dayLabel), \(bar.entryCount) check-ins")
+                        }
+                    }
+                    .frame(height: 78)
+
+                    HStack(spacing: 12) {
+                        legendDot(color: Color.green.opacity(0.85), label: "Lighter")
+                        legendDot(color: Color.brandPrimary.opacity(0.8), label: "Mixed")
+                        legendDot(color: Color.red.opacity(0.8), label: "Heavier")
+                    }
+                }
+                .padding(14)
+                .background(Color.white.opacity(0.88))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            }
+
+            Text("Latest: \(vm.latestCheckInText)")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(18)
+        .background(
+            LinearGradient(
+                colors: [Color.white.opacity(0.96), Color.brandPrimary.opacity(0.08)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 26))
+        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
+    }
+
+    private func summaryMetric(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.title3.bold())
+                .foregroundStyle(Color.brandPrimary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color.white.opacity(0.9))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func legendDot(color: Color, label: String) -> some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text(label)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -196,7 +441,8 @@ struct HomeView: View {
     let vm = HomeViewModel(
         moodRepo: repo,
         aiService: PreviewAIInsightService(),
-        userID: "preview-user"
+        userID: "preview-user",
+        userName: "Friend"
     )
     
     HomeView(vm: vm, selectedTab: .constant(0))

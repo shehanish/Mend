@@ -46,7 +46,7 @@ struct ProfileView: View {
                                     .padding(.top, 40)
                             }
                         }
-                        .onChange(of: selectedItem) { newItem in
+                        .onChange(of: selectedItem) { _, newItem in
                             Task {
                                 if let data = try? await newItem?.loadTransferable(type: Data.self) {
                                     profileImageData = data
@@ -55,6 +55,24 @@ struct ProfileView: View {
                                     }
                                 }
                             }
+                        }
+
+                        if profileImage != nil || !profileImageData.isEmpty {
+                            Button(action: {
+                                profileImageData = Data()
+                                profileImage = nil
+                                selectedItem = nil
+                            }) {
+                                Text("Remove Photo")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.brandPrimary)
+                                    .padding(.horizontal, 18)
+                                    .padding(.vertical, 10)
+                                    .background(Color.white.opacity(0.65))
+                                    .clipShape(Capsule())
+                            }
+                            .padding(.top, -10)
                         }
                         
                         VStack(alignment: .leading, spacing: 10) {
@@ -90,6 +108,11 @@ struct ProfileView: View {
                         
                         Button(action: {
                             // Sign out logic
+                            userName = ""
+                            profileImageData = Data()
+                            editName = ""
+                            profileImage = nil
+                            selectedItem = nil
                             isLoggedIn = false
                             dismiss()
                         }) {

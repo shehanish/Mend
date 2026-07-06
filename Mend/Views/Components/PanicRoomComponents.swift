@@ -9,25 +9,32 @@ struct BreathingCircleView: View {
     @State private var isBreathing = false
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .center) {
             Circle()
                 .fill(Color.sageGreen.opacity(0.2))
                 .frame(width: isBreathing ? 240 : 120, height: isBreathing ? 240 : 120)
-                .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: isBreathing)
+                .animation(.easeInOut(duration: 6.5).repeatForever(autoreverses: true), value: isBreathing)
             
             Circle()
                 .fill(Color.sageGreen.opacity(0.4))
                 .frame(width: isBreathing ? 180 : 90, height: isBreathing ? 180 : 90)
-                .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: isBreathing)
+                .animation(.easeInOut(duration: 6.5).repeatForever(autoreverses: true), value: isBreathing)
             
             Circle()
                 .fill(Color.sageGreen)
                 .frame(width: 80, height: 80)
             
-            Text(isBreathing ? "Exhale" : "Inhale")
-                .font(.subheadline.bold())
-                .foregroundColor(.white)
-                .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: isBreathing)
+            ZStack {
+                Text("Inhale")
+                    .opacity(isBreathing ? 0 : 1)
+
+                Text("Exhale")
+                    .opacity(isBreathing ? 1 : 0)
+            }
+            .font(.subheadline.bold())
+            .foregroundColor(.white)
+            .frame(width: 70, height: 24, alignment: .center)
+            .animation(.easeInOut(duration: 6.5).repeatForever(autoreverses: true), value: isBreathing)
         }
         .frame(height: 250)
         .onAppear {

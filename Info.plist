@@ -14,6 +14,24 @@
 	<string>$(MYAPI_KEY)</string>
 	<key>NSContactsUsageDescription</key>
 	<string>We access your contacts so you can call a friend when you need support.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We use the microphone so you can record a journal entry and keep its transcript.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We use speech recognition to turn your recorded journal into text.</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 </dict>

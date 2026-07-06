@@ -20,9 +20,7 @@ struct MendApp: App {
                 WelcomeView()
             }
         }
-        .modelContainer(for:
-            [MoodEntry.self]
-        )
+        .modelContainer(for: [MoodEntry.self, JournalEntry.self])
         
     }
 }

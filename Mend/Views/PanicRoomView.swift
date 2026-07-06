@@ -8,6 +8,8 @@ import SwiftUI
 struct PanicRoomView: View {
     @State private var vm = PanicRoomViewModel()
     @Environment(\.dismiss) var dismiss
+    @State private var showContactPicker = false
+    @State private var showDrawingPad = false
     
     var body: some View {
         NavigationStack {
@@ -23,23 +25,12 @@ struct PanicRoomView: View {
                             Text(vm.currentQuote)
                                 .font(.title3.italic())
                                 .foregroundColor(.brandPrimary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .frame(maxWidth: .infinity, alignment: .center)
                                 .onTapGesture {
                                     vm.nextQuote()
                                 }
                             
-                            Button(action: { dismiss() }) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "house.fill")
-                                    Text("Home")
-                                        .fontWeight(.bold)
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.sageGreen)
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                            }
+                       
                         }
                         .padding(.horizontal)
                         .padding(.top, 16)
@@ -99,37 +90,47 @@ struct PanicRoomView: View {
                         .padding(.horizontal)
                         
                         // Doodle Pad
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Simple Distraction Pad")
-                                    .font(.headline)
-                                    .foregroundColor(.brandPrimary)
-                                Spacer()
-                                Button("Clear") { vm.clearDoodles() }
-                                    .font(.footnote)
-                                    .foregroundColor(.brandPrimary)
-                            }
-                            
-                            Canvas { context, size in
-                                for line in vm.doodleLines {
-                                    var path = Path()
-                                    path.addLines(line.points)
-                                    context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
+                        Button(action: {
+                            showDrawingPad = true
+                        }) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Tap to draw what you feel")
+                                            .font(.headline)
+                                            .foregroundColor(.brandPrimary)
+
+                                        Text("Open the page and let it out instead of sending it anywhere.")
+                                            .font(.caption)
+                                            .foregroundColor(.brandPrimary.opacity(0.7))
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "pencil.tip.crop.circle.badge.plus")
+                                        .font(.title3)
+                                        .foregroundColor(.sageGreen)
                                 }
+
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(Color.white.opacity(0.7))
+                                    .frame(height: 96)
+                                    .overlay(
+                                        VStack(spacing: 8) {
+                                            Image(systemName: "scribble.variable")
+                                                .font(.title2)
+                                                .foregroundColor(.brandPrimary.opacity(0.75))
+                                            Text("Open Drawing Pad")
+                                                .font(.subheadline.weight(.semibold))
+                                                .foregroundColor(.brandPrimary)
+                                        }
+                                    )
                             }
-                            .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                .onChanged { value in
-                                    let isNew = (value.translation.width + value.translation.height == 0)
-                                    vm.addDoodlePoint(value.location, isNew: isNew)
-                                }
-                            )
-                            .frame(height: 180)
-                            .background(Color.white.opacity(0.7))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .padding()
+                            .background(Color.white.opacity(0.4))
+                            .clipShape(RoundedRectangle(cornerRadius: 24))
                         }
-                        .padding()
-                        .background(Color.white.opacity(0.4))
-                        .clipShape(RoundedRectangle(cornerRadius: 24))
+                        .buttonStyle(.plain)
                         .padding(.horizontal)
                         
                         // Vent Text Box
@@ -149,42 +150,80 @@ struct PanicRoomView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .environment(\.colorScheme, .light)
                                 .scrollContentBackground(.hidden)
+
+                            if !bindableVM.ventText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                HStack {
+                                    Spacer()
+
+                                    Button(action: {
+                                        vm.clearVentText()
+                                    }) {
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "flame.fill")
+                                            Text("Burn It Down")
+                                        }
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 10)
+                                        .background(
+                                            LinearGradient(
+                                                colors: [Color.brandPrimary, Color.sageGreen],
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                        )
+                                        .clipShape(Capsule())
+                                        .shadow(color: Color.brandPrimary.opacity(0.18), radius: 8, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+
                         }
                         .padding()
                         .background(Color.white.opacity(0.4))
                         .clipShape(RoundedRectangle(cornerRadius: 24))
                         .padding(.horizontal)
 
-                        // Quick Help Contacts
                         VStack(spacing: 12) {
-                            Text("Quick Help")
+                            Text("Need someone right now?")
                                 .font(.headline)
                                 .foregroundColor(.brandPrimary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            ResourceButton(
-                                title: "Call Emergency",
-                                icon: "phone.fill",
-                                subLabel: "911",
-                                color: .red) {
-                                vm.callEmergency("911")
+
+                            Button(action: {
+                                showContactPicker = true
+                            }) {
+                                HStack(spacing: 16) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.sageGreen.opacity(0.15))
+                                            .frame(width: 44, height: 44)
+                                        Image(systemName: "person.fill")
+                                            .foregroundColor(.brandPrimary)
+                                            .font(.system(size: 20, weight: .semibold))
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Call a Friend")
+                                            .font(.headline)
+                                            .foregroundColor(.textOnPrimary)
+                                        Text("Pick someone from your contacts")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Color.brandPrimary.opacity(0.5))
+                                }
+                                .padding()
+                                .background(Color.white.opacity(0.85))
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
                             }
-                            
-                            ResourceButton(
-                                title: "Crisis Text Line",
-                                icon: "message.fill",
-                                subLabel: "Text HOME to 741741",
-                                color: .blue) {
-                                vm.textEmergency("741741")
-                            }
-                            
-                            ResourceButton(
-                                title: "Suicide & Crisis Lifeline",
-                                icon: "phone.fill",
-                                subLabel: "Call or text 988",
-                                color: .brandPrimary) {
-                                vm.callEmergency("988")
-                            }
+                            .buttonStyle(.plain)
                         }
                         .padding()
                         .background(Color.white.opacity(0.4))
@@ -197,6 +236,14 @@ struct PanicRoomView: View {
                 .scrollDismissesKeyboard(.interactively)
             }
             .navigationBarHidden(true)
+            .sheet(isPresented: $showDrawingPad) {
+                DrawingPadSheet(vm: vm)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $showContactPicker) {
+                ContactPicker()
+            }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
@@ -211,4 +258,69 @@ struct PanicRoomView: View {
 
 #Preview {
     PanicRoomView()
+}
+
+private struct DrawingPadSheet: View {
+    @State var vm: PanicRoomViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.appBackgroundGradient
+                    .ignoresSafeArea()
+
+                VStack(spacing: 16) {
+                    Text("Draw what you feel")
+                        .font(.headline)
+                        .foregroundColor(.brandPrimary)
+
+                    Canvas { context, size in
+                        for line in vm.doodleLines {
+                            var path = Path()
+                            path.addLines(line.points)
+                            context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
+                        }
+                    }
+                    .gesture(
+                        DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                            .onChanged { value in
+                                let isNew = (value.translation.width + value.translation.height == 0)
+                                vm.addDoodlePoint(value.location, isNew: isNew)
+                            }
+                    )
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 420)
+                    .padding()
+                    .background(Color.white.opacity(0.75))
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .padding(.horizontal)
+
+                    Button("Clear Canvas") {
+                        vm.clearDoodles()
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
+                    .background(Color.brandPrimary)
+                    .clipShape(Capsule())
+
+                    Text("Nothing you draw leaves this space.")
+                        .font(.caption)
+                        .foregroundColor(.brandPrimary.opacity(0.7))
+                }
+                .padding(.top, 24)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Clear") {
+                        vm.clearDoodles()
+                        dismiss()
+                    }
+                    .foregroundColor(.brandPrimary)
+                }
+            }
+        }
+    }
 }

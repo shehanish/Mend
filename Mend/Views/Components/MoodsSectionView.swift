@@ -34,7 +34,7 @@ struct MoodsSectionView: View {
 
                 // NEW: Note box under selected moods box
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Want to add a note?")
+                    Text("Would you like to tell me a bit more about how you're feeling?")
                         .font(.subheadline)
                         .foregroundStyle(Color.brandPrimary)
 

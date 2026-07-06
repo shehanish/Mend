@@ -13,8 +13,8 @@ struct AIInsightBubbleView: View {
     var avatarSystemImage: String = "IMG_3016"
 
     var body: some View {
-        HStack(alignment: .top, spacing: 5) {
-            BlobAvatarView(width: 36, height: 30, showShadow: false)
+        HStack(alignment: .center, spacing: 5) {
+            BlobAvatarView(width: 30, height: 25, showShadow: false)
 
             Text(text)
                 .font(.subheadline)

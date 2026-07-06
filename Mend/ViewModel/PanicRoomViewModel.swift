@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Observation
+import AVFoundation
 
 @Observable
 class PanicRoomViewModel {
@@ -13,6 +14,10 @@ class PanicRoomViewModel {
     var quoteIndex = 0
     var isPlayingMusic = false
     var showContactPicker = false
+
+    private let calmSoundName = "Nervous System Regulation (999 Hz) 1 hour handpan music Malte Marten - Malte Marten (128k)"
+    private let calmSoundExtension = "mp3"
+    private var audioPlayer: AVAudioPlayer?
     
     let quotes = [
         "Take it one breath at a time.",
@@ -33,6 +38,10 @@ class PanicRoomViewModel {
     func clearDoodles() {
         doodleLines.removeAll()
     }
+
+    func clearVentText() {
+        ventText = ""
+    }
     
     func addDoodlePoint(_ point: CGPoint, isNew: Bool) {
         if isNew {
@@ -46,8 +55,39 @@ class PanicRoomViewModel {
     }
     
     func toggleMusic() {
+        if isPlayingMusic {
+            stopCalmSound()
+        } else {
+            startCalmSound()
+        }
         isPlayingMusic.toggle()
-        // Here you would add logic to actually start/stop AVFoundation music
+    }
+
+    private func startCalmSound() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+
+            guard let url = Bundle.main.url(forResource: calmSoundName, withExtension: calmSoundExtension) else {
+                isPlayingMusic = false
+                return
+            }
+
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = -1
+            player.volume = 0.75
+            player.prepareToPlay()
+            player.play()
+            audioPlayer = player
+        } catch {
+            isPlayingMusic = false
+        }
+    }
+
+    private func stopCalmSound() {
+        audioPlayer?.stop()
+        audioPlayer = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
     
     func callEmergency(_ number: String) {

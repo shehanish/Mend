@@ -38,7 +38,7 @@ struct ChatView: View {
                         .padding(.horizontal)
                         .padding(.top, 10)
                         // Auto-scroll to bottom when new messages arrive
-                        .onChange(of: vm.messages.count) { _ in
+                        .onChange(of: vm.messages.count) { _, _ in
                             if let last = vm.messages.last {
                                 withAnimation {
                                     proxy.scrollTo(last.id, anchor: .bottom)
@@ -48,11 +48,28 @@ struct ChatView: View {
                     }
                 }
                 .scrollDismissesKeyboard(.interactively)
+                .onAppear {
+                    Task {
+                        await vm.sendPendingSeedMessageIfNeeded()
+                    }
+                }
                 
                 if vm.isThinking {
                     HStack {
-                        BlobAvatarView(width: 34, height: 28, showShadow: false)
-                            .padding(.bottom, 4)
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.92))
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.brandPrimary.opacity(0.18), lineWidth: 1)
+                                )
+                                .frame(width: 42, height: 42)
+
+                            BlobAvatarView(width: 22, height: 18, showShadow: false)
+                                .frame(width: 42, height: 42, alignment: .center)
+                                .offset(y: -1)
+                        }
+                     
                         
                         Text("typing...")
                             .font(.caption)
@@ -100,7 +117,7 @@ struct ChatView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
-                .padding(.bottom, 4)
+                .padding(.bottom, 15)
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -117,10 +134,10 @@ struct ChatView: View {
 #Preview {
     // Basic preview stub
     struct PreviewService: AIInsightService {
-        func generateMoodInsight(from input: MoodInsightInput) async throws -> String { "Stub" }
-        func generateChatResponse(conversation: [(isUser: Bool, text: String)]) async throws -> String { "Stub reply" }
+        func generateMoodInsight(from input: MoodInsightInput, userName: String) async throws -> String { "Stub" }
+        func generateChatResponse(conversation: [(isUser: Bool, text: String)], userName: String, context: ChatInsightContext?) async throws -> String { "Stub reply" }
     }
     
-    let vm = ChatViewModel(aiService: PreviewService())
+    let vm = ChatViewModel(aiService: PreviewService(), userName: "Friend")
     return ChatView(vm: vm)
 }
