@@ -259,29 +259,30 @@ final class HomeViewModel {
                 to: now
             )
 
-            var counts: [String: Int] = [:]
-            var allNotes: [String] = []
-            for entry in entries {
-                for mood in entry.moods {
-                    counts[mood, default: 0] += 1
-                }
-                if let note = entry.notes, !note.isEmpty {
-                    allNotes.append(note)
-                }
-            }
-
-            // If no moods logged today, keep a general supportive message (no AI call)
-            guard !counts.isEmpty || !allNotes.isEmpty else {
+            guard let latestEntry = entries.last else {
                 todayInsightText = "If today feels heavy, try one gentle thing: water, a walk, or texting someone safe."
                 return
+            }
+
+            let latestMoods = latestEntry.moods
+            let latestNotes = latestEntry.notes?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let counts = latestMoods.reduce(into: [String: Int]()) { result, mood in
+                result[mood, default: 0] += 1
             }
 
             let input = MoodInsightInput(
                 startDate: startOfToday,
                 endDate: now,
                 moodCounts: counts,
-                notes: allNotes
+                notes: latestNotes.isEmpty ? [] : [latestNotes]
             )
+
+            let moodsDebug = counts
+                .sorted { $0.key.localizedCaseInsensitiveCompare($1.key) == .orderedAscending }
+                .map { "\($0.key)=\($0.value)" }
+                .joined(separator: ", ")
+            let notesDebug = latestNotes.isEmpty ? "none" : latestNotes
+            print("[HomeViewModel] reflection AI input latestEntry moods=[\(moodsDebug)] notes=[\(notesDebug)]")
 
             todayInsightText = try await aiService.generateMoodInsight(from: input, userName: userName)
         } catch {

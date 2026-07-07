@@ -61,6 +61,12 @@ struct HomeView: View {
         let nameToDisplay = userName.isEmpty ? "Friend" : userName
         return "\(timeBasedGreeting), \(nameToDisplay)!"
     }
+
+    private var todayDateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, d MMMM"
+        return formatter.string(from: Date())
+    }
     
     var body: some View {
         NavigationStack {
@@ -162,7 +168,7 @@ struct HomeView: View {
                                 Text(err)
                                     .font(.footnote.weight(.medium))
                                     .foregroundStyle(.red)
-                        }
+                            }
                         }
                         .padding(18)
                         .background(Color.white.opacity(0.88))
@@ -267,27 +273,30 @@ struct HomeView: View {
     }
 
     private var weekSnapshotCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Home Snapshot")
+                    Label("This week", systemImage: "calendar")
                         .font(.headline)
                         .foregroundStyle(Color.brandPrimary)
                     Text(vm.weeklySummaryLine)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()
                 Image(systemName: "chart.bar.fill")
                     .foregroundStyle(Color.brandPrimary)
                     .padding(10)
-                    .background(Color.brandPrimary.opacity(0.12))
+                    .background(Color.brandPrimary.opacity(0.10))
                     .clipShape(Circle())
             }
 
+            // Metrics row
             HStack(spacing: 10) {
-                summaryMetric(title: "Check-ins", value: "\(vm.weeklyCheckInCount)")
-                summaryMetric(title: "Notes", value: "\(vm.weeklyNoteCount)")
+                summaryMetric(icon: "checkmark.circle.fill", title: "Check-ins", value: "\(vm.weeklyCheckInCount)")
+                summaryMetric(icon: "note.text",            title: "Notes",      value: "\(vm.weeklyNoteCount)")
             }
 
             if let warning = vm.weeklyWarningText {
@@ -388,9 +397,24 @@ struct HomeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18))
             }
 
-            Text("Latest: \(vm.latestCheckInText)")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            // Last check-in chip
+            if vm.weeklyCheckInCount > 0 {
+                HStack(spacing: 8) {
+                    Image(systemName: "clock")
+                        .font(.caption)
+                        .foregroundStyle(Color.brandPrimary.opacity(0.70))
+                    Text("Last check-in: ")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.brandPrimary.opacity(0.70))
+                    + Text(vm.latestCheckInText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color.brandPrimary.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
         }
         .padding(18)
         .background(
@@ -404,18 +428,25 @@ struct HomeView: View {
         .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
     }
 
-    private func summaryMetric(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.title3.bold())
+    private func summaryMetric(icon: String, title: String, value: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.title3)
                 .foregroundStyle(Color.brandPrimary)
+                .frame(width: 28)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.title3.bold())
+                    .foregroundStyle(Color.brandPrimary)
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
         .padding(12)
-        .background(Color.white.opacity(0.9))
+        .background(Color.white.opacity(0.90))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
