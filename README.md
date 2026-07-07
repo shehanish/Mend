@@ -1,92 +1,136 @@
-# Mend - Breakup Recovery & No Contact Tracker
+<div align="center">
 
-![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)
-![iOS](https://img.shields.io/badge/iOS-17.0+-blue.svg)
-![SwiftUI](https://img.shields.io/badge/SwiftUI-Enabled-blue.svg)
-![Architecture](https://img.shields.io/badge/Architecture-MVVM-green.svg)
+# Mend
 
-**Mend** is a specialized iOS application built with SwiftUI, designed to support users navigating the difficult emotions of a breakup. It provides a safe, interactive environment to track healing milestones, maintain boundaries, process feelings via AI, and manage sudden waves of anxiety or grief.
+### Your gentle healing companion
 
-## ✨ Key Features
+*Track your days, understand your feelings, and find support that feels human.*
 
-* 🚫 **No Contact Counter:** A dedicated breakup tracker to help you stay focused on your healing journey, counting the days since you last contacted your ex to encourage space and recovery.
+[![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
+[![iOS](https://img.shields.io/badge/iOS-17.0+-blue.svg)](https://developer.apple.com/ios/)
+[![SwiftUI](https://img.shields.io/badge/SwiftUI-blue.svg)](https://developer.apple.com/xcode/swiftui/)
+[![Architecture](https://img.shields.io/badge/Architecture-MVVM-green.svg)](#)
+[![Privacy](https://img.shields.io/badge/Privacy-Local%20First-purple.svg)](#)
 
-* 🤖 **AI Emotional Support & Affirmations:** Chat in real-time with an empathetic AI companion powered by OpenAI that:
-  * **Listens & Validates:** Engages in meaningful conversations to help you process your feelings and emotions
-  * **Offers Affirmations & Self-Love:** Delivers compassionate affirmations tailored to your emotional state and healing journey
-  * **Mood Tracking & Reflection:** Helps you explore your emotional patterns and understand what you're feeling
-  * **Supportive Guidance:** Suggests healthy perspectives and positive reframing to work through difficult moments
-  * **Safe Space to Express:** Provides a judgment-free companion to help you navigate complex emotions
+</div>
 
-* ❤️‍🩹 **The Panic Room:** An interactive, immediate safe space designed to alleviate sudden anxiety attacks or overwhelming urges to reach out. It includes:
-  * 🌬️ **Guided Breathing:** Visual, paced breathing animations (Inhale/Exhale) to calm your nervous system
-  * 🧘‍♀️ **Grounding Techniques:** The 5-4-3-2-1 mindfulness exercise to bring you back to the present moment
-  * 🎨 **Distraction Pad:** A simple, built-in canvas for doodling your mind away from the stress
-  * 📝 **Private Vent Space:** A secure text box to type out unsaid thoughts or texts you shouldn't send (content is intentionally never saved)
-  * 🆘 **Emergency Lifelines:** Quick-action buttons to instantly dial or text crisis support (911, Crisis Text Line, 988 Lifeline) and personal contacts
+---
 
-* 🔒 **Local Privacy:** Built with SwiftData to ensure personal mood logs, journal entries, and AI conversations remain strictly private and secure on-device.
+## Demo
 
-## 📸 Screenshots
+https://github.com/user-attachments/assets/1500c51a-a39c-4cc3-95b3-abf284f9bbef
 
-<!-- Example:
-<img src="link_to_screenshot_1" width="200"/> <img src="link_to_screenshot_2" width="200"/> <img src="link_to_screenshot_3" width="200"/>
--->
+---
 
-## 🛠 Tech Stack
+## Screenshots
 
-* **Language:** Swift 5.9+
-* **UI Framework:** SwiftUI
-* **Architecture:** MVVM (Model-View-ViewModel) + Components
-* **Database:** SwiftData (Local persistence)
-* **AI & APIs:** OpenAI API (for empathetic AI conversations, affirmations, and emotional support)
-* **Frameworks:** AVFoundation (for soothing soundscapes), ContactsUI
+<p align="center">
+  <!-- Replace with your actual simulator screenshots (Cmd+S in Xcode Simulator) -->
+  <img src=".github/assets/welcome.png" width="22%" alt="Welcome">
+  <img src=".github/assets/home.png" width="22%" alt="Home">
+  <img src=".github/assets/chat.png" width="22%" alt="Chat">
+  <img src=".github/assets/calm.png" width="22%" alt="Calm Space">
+</p>
 
-## ⚙️ Requirements
+---
 
-* Xcode 15.0 or later
-* iOS 17.0 or later
-* An active OpenAI API Key (for the AI Emotional Support feature)
+## What is Mend?
 
-## 🚀 Installation & Setup
+Mend is a private, local-first iOS wellness app for people who want a softer place to process their feelings. It combines daily mood check-ins, AI-powered reflections, a guided journal, and a calm space for moments of anxiety — all stored privately on your device.
 
-1. **Clone the repository:**
+---
+
+## Features
+
+**Daily check-ins**
+Log how you feel each day with a mood picker and optional notes. Mend tracks patterns over time and shows you a gentle weekly snapshot.
+
+**AI companion — Talk to Mend**
+Have a real conversation with an AI that listens without judgment. Powered by OpenAI via a secure backend proxy — your messages are never stored by Mend.
+
+**Journal**
+Write freely, record voice entries, or log gratitudes. Your journal stays entirely on your device using SwiftData.
+
+**Calm Space**
+A dedicated screen for moments of overwhelm. Includes guided breathing, the 5-4-3-2-1 grounding technique, a private vent pad, a drawing canvas, and a direct link to the **988 Suicide & Crisis Lifeline**.
+
+**Personal setup**
+Choose your name, healing focus, and daily reminder time during a gentle onboarding flow. Everything adapts to feel like *your* Mend.
+
+---
+
+## Privacy
+
+- All mood entries, journal entries, and profile data are stored **locally on your device** using SwiftData
+- AI features send only aggregated mood counts and your nickname to OpenAI — never raw journal text
+- No account required, no tracking, no third-party analytics
+- [Privacy Policy](https://shehanish.github.io/Mend/privacy-policy.html)
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Language | Swift 5.9+ |
+| UI | SwiftUI |
+| Architecture | MVVM |
+| Local storage | SwiftData |
+| AI | OpenAI API via Cloudflare Workers proxy |
+| Notifications | UserNotifications (local only) |
+| Voice | AVFoundation + Speech framework (on-device) |
+
+---
+
+## Running Locally
+
+1. **Clone the repo**
    ```bash
-   git clone https://github.com/yourusername/Mend-iosapp.git
-   cd Mend-iosapp
+   git clone https://github.com/shehanish/Mend.git
+   cd Mend
    ```
 
-2. **Open the project in Xcode:**
-   Open the `Mend-iosapp.xcodeproj` or `.xcworkspace` file in Xcode.
+2. **Open in Xcode**
+   Open `Mend.xcodeproj`
 
-3. **Configure the OpenAI API Key:**
-   This project uses an `.xcconfig` file to keep API keys secure.
-   * In the `Config` folder, locate `Secrets.example.xcconfig`.
-   * Duplicate this file and rename the copy to `Secrets.xcconfig`.
-   * Open `Secrets.xcconfig` and add your OpenAI API key:
-     ```xcconfig
-     MYAPI_KEY = sk-your_actual_openai_api_key_here
-     ```
-   *(Note: Build settings are automatically mapped to the Info.plist and read via `AppConfig.swift`).*
+3. **Configure the API key** *(optional — only needed for AI features)*
 
-4. **Build and Run:**
-   * Select your target device or simulator (iPhone 15 recommended).
-   * Press `Cmd + R` or click the Play button to build and run the app!
+   The app uses a Cloudflare Workers proxy by default. To run AI features locally:
+   - Duplicate `Mend/Config/Secrets.example.xcconfig` → rename to `Secrets.xcconfig`
+   - Add your OpenAI key: `MYAPI_KEY = sk-your-key-here`
+   - In `AppConfig.swift`, set `proxyURL = nil` to call OpenAI directly
 
-## 📂 Project Structure
+4. **Build and run**
+   Select a simulator or device → `Cmd + R`
 
-This project follows a clean **MVVM architecture**:
-* `Models/`: Data structures representing Core entities (MoodEntry, ChatMessage, AffirmationLog, etc.).
-* `Views/`: SwiftUI views defining the user interface.
-  * `Components/`: Reusable, smaller view components (e.g., `PanicRoomComponents.swift`, `ChatComponents.swift`, `AffirmationView.swift`) to keep code modular.
-* `ViewModel/`: Handles the presentation logic, state management, and acts as a bridge between Views and Data.
-* `Data/Repositories/`: Protocol-oriented data access layers handling `SwiftData` operations.
-* `AI/`: Services interacting with the OpenAI API for generating empathetic responses and affirmations to support emotional processing.
+---
 
-## 🤝 Contributing
+## Project Structure
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/Mend-iosapp/issues) if you want to contribute.
+```
+Mend/
+├── AI/                  OpenAI service + insight models
+├── Config/              AppConfig, xcconfig files
+├── Data/Repositories/   SwiftData repositories (mood, journal)
+├── Models/              MoodEntry, JournalEntry, ChatMessage
+├── ViewModel/           HomeViewModel, ChatViewModel, JournalViewModel...
+└── Views/
+    ├── Components/      Reusable views (HomeView, MoodPicker, BlobAvatar...)
+    ├── AuthView         Onboarding flow
+    ├── ChatView         AI chat
+    ├── JournalView      Journal + history
+    ├── PanicRoomView    Calm Space
+    └── SettingsView     Notifications + preferences
+```
 
-## 📄 License
+---
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Crisis Resources
+
+Mend includes a direct link to the **988 Suicide & Crisis Lifeline** (call or text 988) in the Calm Space tab. If you or someone you know is in crisis, please reach out.
+
+---
+
+<div align="center">
+  <sub>Built with care · Your thoughts are yours</sub>
+</div>
