@@ -490,7 +490,7 @@ struct JournalView: View {
                                     .font(.caption)
                                     .foregroundStyle(Color.brandPrimary)
                             } else {
-                                Label("Journal", systemImage: "book.pages")
+                                Label("Journal", systemImage: "note.text")
                                     .font(.caption)
                                     .foregroundStyle(Color.brandPrimary)
                             }

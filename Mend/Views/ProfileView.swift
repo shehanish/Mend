@@ -33,8 +33,7 @@ struct ProfileView: View {
         NavigationStack {
             ZStack {
                 Color.appBackgroundGradient.ignoresSafeArea()
-
-                ScrollView(showsIndicators: false) {
+                    .dismissKeyboardOnTap()
                     VStack(spacing: 24) {
 
                         // MARK: - Avatar hero
@@ -228,7 +227,7 @@ struct ProfileView: View {
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
-}
+
 
 // MARK: - Simple flow layout for chips
 private struct FlowLayout: Layout {

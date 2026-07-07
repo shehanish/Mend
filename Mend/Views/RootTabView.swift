@@ -40,11 +40,11 @@ struct RootTabView: View {
                         .tag(1)
 
                     JournalView(vm: journalVM)
-                        .tabItem { Label("Journal", systemImage: "book.pages") }
+                        .tabItem { Label("Journal", systemImage: "note.text") }
                         .tag(2)
                         
                     PanicRoomView()
-                        .tabItem { Label("Panic Room", systemImage: "heart.fill") }
+                        .tabItem { Label("Calm Space", systemImage: "heart.fill") }
                         .tag(3)
                 }
                 .tint(Color.brandPrimary)
@@ -62,7 +62,10 @@ struct RootTabView: View {
         guard homeVM == nil else { return }
         
         let moodRepo = SwiftDataMoodRepository(context: modelContext)
-        let aiService: any AIInsightService = OpenAIInsightService(apiKey: AppConfig.apiKey)
+        let aiService: any AIInsightService = OpenAIInsightService(
+            apiKey: AppConfig.useDirectAuth ? AppConfig.apiKey : "",
+            endpointURL: AppConfig.chatEndpointURL
+        )
 
         homeVM = HomeViewModel(
             moodRepo: moodRepo,

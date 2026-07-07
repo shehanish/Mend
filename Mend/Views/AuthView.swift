@@ -23,7 +23,7 @@ struct AuthView: View {
     private let focusOptions: [(title: String, subtitle: String, icon: String)] = [
         ("Daily check-ins",  "Log how you feel each day",          "sun.and.horizon.fill"),
         ("Voice journaling", "Speak and save your thoughts",       "mic.fill"),
-        ("Calm support",     "Softer reflections when it's hard",  "bubble.heart.fill"),
+        ("Calm support",     "Softer reflections when it's hard",  "heart.circle.fill"),
         ("Track healing",    "See your progress over time",        "chart.line.uptrend.xyaxis"),
     ]
 
@@ -34,8 +34,7 @@ struct AuthView: View {
         NavigationStack {
             ZStack(alignment: .top) {
                 Color.appBackgroundGradient.ignoresSafeArea()
-
-                // Ambient decorative circles
+                    .dismissKeyboardOnTap()
                 Circle()
                     .fill(Color.brandPrimary.opacity(0.07))
                     .frame(width: 320)
@@ -200,7 +199,7 @@ struct AuthView: View {
                             Label("Please keep it under 30 characters.", systemImage: "exclamationmark.circle")
                                 .foregroundStyle(.red.opacity(0.80))
                         } else if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Text("Hi, \(name.trimmingCharacters(in: .whitespacesAndNewlines)) 👋")
+                            Label("Hi, \(name.trimmingCharacters(in: .whitespacesAndNewlines))!", systemImage: "hand.wave.fill")
                                 .foregroundStyle(Color.textOnPrimary.opacity(0.72))
                         } else {
                             Text("This is how Mend will greet you.")
@@ -290,7 +289,7 @@ struct AuthView: View {
                         .multilineTextAlignment(.center)
                         .accessibilityAddTraits(.isHeader)
 
-                    Text("Your personal Mend is ready.\nTake a breath. You've got this. 🌿")
+                    Text("Your personal Mend is ready.\nTake a breath. You've got this.")
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Color.textOnPrimary.opacity(0.78))

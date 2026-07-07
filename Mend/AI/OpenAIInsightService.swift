@@ -11,11 +11,17 @@ import Foundation
 struct OpenAIInsightService: AIInsightService {
     let apiKey: String
     let model: String
+    let endpointURL: String
 
     /// Recommended default model for cost-effective text generation.
-    init(apiKey: String, model: String = "gpt-4o-mini") {
-        self.apiKey = apiKey
-        self.model = model
+    init(
+        apiKey: String,
+        model: String = "gpt-4o-mini",
+        endpointURL: String = "https://api.openai.com/v1/chat/completions"
+    ) {
+        self.apiKey      = apiKey
+        self.model       = model
+        self.endpointURL = endpointURL
     }
 
     // MARK: - API Types
@@ -46,7 +52,7 @@ struct OpenAIInsightService: AIInsightService {
     // MARK: - Public API
 
     func generateMoodInsight(from input: MoodInsightInput, userName: String) async throws -> String {
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        let url = URL(string: endpointURL)!
         let displayName = userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Friend" : userName
         let moodSummary = input.moodCounts
             .sorted { $0.key.localizedCaseInsensitiveCompare($1.key) == .orderedAscending }
@@ -100,7 +106,9 @@ struct OpenAIInsightService: AIInsightService {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        if !apiKey.isEmpty {
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(body)
 
@@ -127,7 +135,7 @@ struct OpenAIInsightService: AIInsightService {
     }
 
     func generateChatResponse(conversation: [(isUser: Bool, text: String)], userName: String, context: ChatInsightContext?) async throws -> String {
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        let url = URL(string: endpointURL)!
         let displayName = userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Friend" : userName
         let contextText = context?.isEmpty == false ? context!.promptText : "No additional home or journal context was provided."
 
@@ -167,7 +175,9 @@ struct OpenAIInsightService: AIInsightService {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        if !apiKey.isEmpty {
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(body)
 

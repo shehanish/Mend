@@ -2,108 +2,134 @@ import SwiftUI
 
 struct WelcomeView: View {
     @State private var showAuthSheet = false
-    
+    @State private var appeared     = false
+
     var body: some View {
         ZStack {
-            Color.appBackgroundGradient
-                .ignoresSafeArea()
+            // Background
+            Color.appBackgroundGradient.ignoresSafeArea()
+
+            // Decorative blobs
+            Circle()
+                .fill(Color.brandPrimary.opacity(0.12))
+                .frame(width: 340)
+                .blur(radius: 60)
+                .offset(x: 160, y: -280)
+                .allowsHitTesting(false)
 
             Circle()
-                .fill(Color.white.opacity(0.24))
-                .frame(width: 260, height: 260)
-                .blur(radius: 24)
-                .offset(x: 130, y: -260)
+                .fill(Color.sageGreen.opacity(0.14))
+                .frame(width: 300)
+                .blur(radius: 70)
+                .offset(x: -160, y: 320)
+                .allowsHitTesting(false)
 
             Circle()
-                .fill(Color.white.opacity(0.18))
-                .frame(width: 220, height: 220)
-                .blur(radius: 28)
-                .offset(x: -140, y: 230)
-            
+                .fill(Color.white.opacity(0.10))
+                .frame(width: 200)
+                .blur(radius: 40)
+                .offset(x: 0, y: 80)
+                .allowsHitTesting(false)
+
             VStack(spacing: 0) {
-                Spacer(minLength: 28)
+                Spacer()
 
-                VStack(spacing: 16) {
-                    Text("Mend")
-                        .font(.system(size: 54, weight: .heavy))
-                        .foregroundStyle(Color.textOnPrimary)
-                        .kerning(1.5)
+                // MARK: - Hero
+                VStack(spacing: 0) {
+                    // Floating mascot
+                    BlobAvatarView(width: 180, height: 148, showShadow: true, animate: true)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 20)
+                        .animation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.1), value: appeared)
 
-                    Text("A softer place to heal, track, and come back to yourself.")
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.textOnPrimary.opacity(0.78))
-                        .padding(.horizontal, 36)
-                }
-                
-                Spacer(minLength: 22)
-                
-                VStack(spacing: 18) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 36, style: .continuous)
-                            .fill(Color.white.opacity(0.30))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 36, style: .continuous)
-                                    .stroke(Color.white.opacity(0.35), lineWidth: 1)
+                    // App name
+                    VStack(spacing: 10) {
+                        Text("Mend")
+                            .font(.system(size: 62, weight: .heavy, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color.brandPrimary, Color.sageGreen],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                            .shadow(color: Color.black.opacity(0.10), radius: 20, x: 0, y: 12)
-                        
-                        BlobAvatarView(width: 220, height: 160, animate: true)
-                            .padding(.vertical, 18)
-                    }
-                    .padding(.horizontal, 28)
+                            .kerning(2)
+                            .shadow(color: Color.brandPrimary.opacity(0.18), radius: 8, y: 4)
 
-                    VStack(spacing: 12) {
-                        Text("Start your healing journey")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color.textOnPrimary)
+                        Text("Your gentle healing companion")
+                            .font(.system(size: 17, weight: .medium, design: .rounded))
+                            .foregroundStyle(Color.textOnPrimary.opacity(0.72))
                             .multilineTextAlignment(.center)
-                        
-                        Text("Track your days, understand your feelings, and find support that feels human.")
-                            .font(.body)
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(Color.textOnPrimary.opacity(0.80))
-                            .padding(.horizontal, 32)
                     }
-
-                    HStack(spacing: 5) {
-                        TagPill(title: "Daily check-ins")
-                        TagPill(title: "Gentle support")
-                        TagPill(title: "Private space")
-                    }
-                    .padding(.horizontal, 24)
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 16)
+                    .animation(.spring(response: 0.8, dampingFraction: 0.75).delay(0.2), value: appeared)
                 }
 
-                Spacer(minLength: 18)
+                Spacer(minLength: 36)
 
-                Button(action: {
-                    showAuthSheet = true
-                }) {
-                    HStack(spacing: 10) {
-                        Text("Get Started")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                        Image(systemName: "arrow.right")
-                            .font(.subheadline.weight(.bold))
-                    }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.brandPrimary, Color.brandPrimary.opacity(0.82)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+                // MARK: - Feature highlights
+                VStack(spacing: 12) {
+                    WelcomeFeatureRow(
+                        icon: "heart.text.square.fill",
+                        title: "Daily mood check-ins",
+                        subtitle: "Understand how you feel, one day at a time"
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    .shadow(color: Color.brandPrimary.opacity(0.22), radius: 14, x: 0, y: 10)
+                    WelcomeFeatureRow(
+                        icon: "bubble.left.and.bubble.right.fill",
+                        title: "AI-powered gentle support",
+                        subtitle: "A compassionate companion that listens"
+                    )
+                    WelcomeFeatureRow(
+                        icon: "lock.fill",
+                        title: "Private & stays on your device",
+                        subtitle: "Your feelings are yours alone"
+                    )
+                }
+                .padding(.horizontal, 24)
+                .opacity(appeared ? 1 : 0)
+                .offset(y: appeared ? 0 : 20)
+                .animation(.spring(response: 0.8, dampingFraction: 0.8).delay(0.35), value: appeared)
+
+                Spacer(minLength: 36)
+
+                // MARK: - CTA
+                VStack(spacing: 14) {
+                    Button {
+                        showAuthSheet = true
+                    } label: {
+                        HStack(spacing: 10) {
+                            Text("Begin your journey")
+                                .font(.system(size: 17, weight: .bold, design: .rounded))
+                            Image(systemName: "arrow.right")
+                                .font(.subheadline.weight(.bold))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 18)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.brandPrimary, Color.brandPrimary.opacity(0.78)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .shadow(color: Color.brandPrimary.opacity(0.32), radius: 16, y: 8)
+                    }
+
+                    Text("Free · Private · No account required")
+                        .font(.caption)
+                        .foregroundStyle(Color.textOnPrimary.opacity(0.48))
                 }
                 .padding(.horizontal, 28)
-                .padding(.bottom, 44)
+                .padding(.bottom, 52)
+                .opacity(appeared ? 1 : 0)
+                .offset(y: appeared ? 0 : 16)
+                .animation(.spring(response: 0.8, dampingFraction: 0.8).delay(0.45), value: appeared)
             }
         }
+        .onAppear { appeared = true }
         .sheet(isPresented: $showAuthSheet) {
             AuthView()
                 .presentationDetents([.large])
@@ -113,25 +139,44 @@ struct WelcomeView: View {
     }
 }
 
-private struct TagPill: View {
+// MARK: - Feature row
+private struct WelcomeFeatureRow: View {
+    let icon: String
     let title: String
+    let subtitle: String
 
     var body: some View {
-        Text(title)
-            .font(.caption)
-            .fontWeight(.semibold)
-            .foregroundStyle(Color.textOnPrimary)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color.white.opacity(0.26))
-            .clipShape(Capsule())
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
-            )
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(Color.brandPrimary)
+                .frame(width: 42, height: 42)
+                .background(Color.white.opacity(0.60))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .shadow(color: Color.brandPrimary.opacity(0.10), radius: 6, y: 3)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.textOnPrimary)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(Color.textOnPrimary.opacity(0.62))
+            }
+
+            Spacer()
+        }
+        .padding(14)
+        .background(Color.white.opacity(0.42))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.30), lineWidth: 1)
+        )
     }
 }
 
 #Preview {
     WelcomeView()
 }
+

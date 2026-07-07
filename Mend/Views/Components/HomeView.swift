@@ -73,6 +73,7 @@ struct HomeView: View {
             ZStack {
                 Color.appBackgroundGradient
                     .ignoresSafeArea()
+                    .dismissKeyboardOnTap()
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 30) {

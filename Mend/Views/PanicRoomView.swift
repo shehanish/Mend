@@ -192,6 +192,45 @@ struct PanicRoomView: View {
                                 .foregroundColor(.brandPrimary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
+                            // 988 Crisis Line
+                            Button(action: {
+                                if let url = URL(string: "tel://988"),
+                                   UIApplication.shared.canOpenURL(url) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }) {
+                                HStack(spacing: 16) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.red.opacity(0.12))
+                                            .frame(width: 44, height: 44)
+                                        Image(systemName: "phone.fill")
+                                            .foregroundColor(.red.opacity(0.80))
+                                            .font(.system(size: 18, weight: .semibold))
+                                    }
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("988 Suicide & Crisis Lifeline")
+                                            .font(.headline)
+                                            .foregroundColor(.primary)
+                                        Text("Call or text 988 · Free, confidential, 24/7")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Color.red.opacity(0.40))
+                                }
+                                .padding()
+                                .background(Color.red.opacity(0.06))
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.red.opacity(0.15), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Call 988 Suicide and Crisis Lifeline")
+
                             Button(action: {
                                 showContactPicker = true
                             }) {

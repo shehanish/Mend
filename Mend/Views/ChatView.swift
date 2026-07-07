@@ -22,10 +22,20 @@ struct ChatView: View {
 
             VStack(spacing: 0) {
                 // Header
-                Text("Chat area")
-                    .font(.headline)
-                    .foregroundStyle(Color.brandPrimary)
-                    .padding()
+                VStack(spacing: 4) {
+                    Text("Talk to Mend")
+                        .font(.headline.bold())
+                        .foregroundStyle(Color.brandPrimary)
+                    Text("AI companion · Not a substitute for professional care")
+                        .font(.caption)
+                        .foregroundStyle(Color.brandPrimary.opacity(0.52))
+                }
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(Color.white.opacity(0.38))
+                .overlay(alignment: .bottom) {
+                    Divider().opacity(0.18)
+                }
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     ScrollViewReader { proxy in
@@ -45,6 +55,7 @@ struct ChatView: View {
                                 }
                             }
                         }
+                        .dismissKeyboardOnTap()
                     }
                 }
                 .scrollDismissesKeyboard(.interactively)
