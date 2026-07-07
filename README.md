@@ -16,21 +16,23 @@
 
 ---
 
-## Demo
+## App in Action
 
-https://github.com/user-attachments/assets/1500c51a-a39c-4cc3-95b3-abf284f9bbef
+**Welcome & Home**
 
----
+https://github.com/user-attachments/assets/e6753d37-2e51-4c33-b0b3-7b1279f38616
 
-## Screenshots
+**Chat & Journal**
 
-<p align="center">
-  <!-- Replace with your actual simulator screenshots (Cmd+S in Xcode Simulator) -->
-  <img src=".github/assets/welcome.png" width="22%" alt="Welcome">
-  <img src=".github/assets/home.png" width="22%" alt="Home">
-  <img src=".github/assets/chat.png" width="22%" alt="Chat">
-  <img src=".github/assets/calm.png" width="22%" alt="Calm Space">
-</p>
+https://github.com/user-attachments/assets/e5237405-c6e1-43ac-ac72-710792992f70
+
+**Calm Space**
+
+https://github.com/user-attachments/assets/1fd4d563-c579-40f9-8ca1-ca133d5ac556
+
+**Settings & Privacy**
+
+https://github.com/user-attachments/assets/03ca9ac6-b630-4e46-bb34-1abf4bdee98e
 
 ---
 
