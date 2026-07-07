@@ -18,21 +18,28 @@
 
 ## App in Action
 
-**Welcome & Home**
-
-https://github.com/user-attachments/assets/e6753d37-2e51-4c33-b0b3-7b1279f38616
-
-**Chat & Journal**
-
-https://github.com/user-attachments/assets/e5237405-c6e1-43ac-ac72-710792992f70
-
-**Calm Space**
-
-https://github.com/user-attachments/assets/1fd4d563-c579-40f9-8ca1-ca133d5ac556
-
-**Settings & Privacy**
-
-https://github.com/user-attachments/assets/03ca9ac6-b630-4e46-bb34-1abf4bdee98e
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <b>Welcome & Home</b><br><br>
+      <img src=".github/assets/welcome-home.gif" width="200" alt="Welcome and Home">
+    </td>
+    <td align="center" width="50%">
+      <b>Chat & Journal</b><br><br>
+      <img src=".github/assets/chat-journal.gif" width="200" alt="Chat and Journal">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Calm Space</b><br><br>
+      <img src=".github/assets/calm-space.gif" width="200" alt="Calm Space">
+    </td>
+    <td align="center">
+      <b>Settings & Privacy</b><br><br>
+      <img src=".github/assets/settings-privacy.gif" width="200" alt="Settings and Privacy">
+    </td>
+  </tr>
+</table>
 
 ---
 
