@@ -107,7 +107,8 @@ struct WelcomeView: View {
         .sheet(isPresented: $showAuthSheet) {
             AuthView()
                 .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+                .presentationDragIndicator(.hidden)
+                .interactiveDismissDisabled()
         }
     }
 }
