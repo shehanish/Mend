@@ -398,25 +398,22 @@ struct HomeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18))
             }
 
-            // Last check-in chip
             if vm.weeklyCheckInCount > 0 {
                 HStack(spacing: 8) {
                     Image(systemName: "clock")
                         .font(.caption)
                         .foregroundStyle(Color.brandPrimary.opacity(0.70))
-                    Text("Last check-in: ")
+                    
+                    // Modern concatenation using nested Text interpolation
+                    Text("Last check-in: \(Text(vm.latestCheckInText).font(.caption).foregroundStyle(.secondary))")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(Color.brandPrimary.opacity(0.70))
-                    + Text(vm.latestCheckInText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(Color.brandPrimary.opacity(0.06))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-        }
+            }        }
         .padding(18)
         .background(
             LinearGradient(

@@ -202,7 +202,7 @@ final class JournalViewModel {
 
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetoothHFP])
             try session.setActive(true)
 
             let url = makeRecordingURL()
@@ -298,7 +298,7 @@ final class JournalViewModel {
 
     private func requestMicrophonePermission() async -> Bool {
         await withCheckedContinuation { continuation in
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+            AVAudioApplication.requestRecordPermission { granted in
                 continuation.resume(returning: granted)
             }
         }
